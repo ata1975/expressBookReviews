@@ -51,7 +51,7 @@ public_users.get('/isbn/:isbn', async (req, res) => {
 const getBooksByAuthor = (author) => {
     return new Promise(async (resolve, reject) => {
         const books = await getBooks();
-        
+
         const book = Object.values(books).find(b => b.author === author);
         resolve(book);
     })
@@ -71,15 +71,27 @@ public_users.get('/author/:author', function (req, res) {
         });
 });
 
+const getBooksByTitle = (title) => {
+    return new Promise(async (resolve, reject) => {
+        const books = await getBooks();
+
+        const book = Object.values(books).find(b => b.title === title);
+        resolve(book);
+    })
+};
+
 // Get all books based on title
 public_users.get('/title/:title', function (req, res) {
     const title = req.params.title;
-    const found = Object.values(books).find(b => b.title === title);
-    if (found) {
-        return res.json(found);
-    }
 
-    return res.status(404).json({ message: "The title doesn't exist!" });
+    getBooksByTitle(title)
+        .then(book => {
+            if (book) {
+                return res.json(book);
+            }
+
+            return res.status(404).json({ message: "The title doesn't exist!" });
+        });
 });
 
 //  Get book review
