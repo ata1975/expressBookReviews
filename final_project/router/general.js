@@ -31,11 +31,18 @@ public_users.get('/', async (req, res) => {
     return res.json(books);
 });
 
-// Get book details based on ISBN
-public_users.get('/isbn/:isbn', function (req, res) {
-    const isbn = parseInt(req.params.isbn);
-    if (!isNaN(isbn)) {
-        return res.json(books[isbn]);
+const getBookByISBN = (isbn) => {
+    return new Promise((resolve, reject) => {
+        let id = parseInt(isbn);
+        resolve(books[id]);
+    });
+};
+
+
+public_users.get('/isbn/:isbn', async (req, res) => {
+    const book = await getBookByISBN(req.params.isbn);
+    if (book) {
+        return res.json(book);
     }
 
     return res.status(404).json({ message: "ISBN doesn't exist!" });
