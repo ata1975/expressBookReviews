@@ -49,8 +49,12 @@ public_users.get('/title/:title', function (req, res) {
 
 //  Get book review
 public_users.get('/review/:isbn', function (req, res) {
-    //Write your code here
-    return res.status(300).json({ message: "Yet to be implemented" });
+    const isbn = parseInt(req.params.isbn);
+    if (!isNaN(isbn)) {
+        return res.json(books[isbn].reviews);
+    }
+
+    return res.status(404).json({ message: "The ISBN doesn't exist!" });
 });
 
 module.exports.general = public_users;
