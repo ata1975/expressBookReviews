@@ -38,7 +38,7 @@ const getBookByISBN = (isbn) => {
     });
 };
 
-
+// Get book details based on ISBN
 public_users.get('/isbn/:isbn', async (req, res) => {
     const book = await getBookByISBN(req.params.isbn);
     if (book) {
@@ -48,15 +48,27 @@ public_users.get('/isbn/:isbn', async (req, res) => {
     return res.status(404).json({ message: "ISBN doesn't exist!" });
 });
 
+const getBooksByAuthor = (author) => {
+    return new Promise(async (resolve, reject) => {
+        const books = await getBooks();
+        
+        const book = Object.values(books).find(b => b.author === author);
+        resolve(book);
+    })
+};
+
 // Get book details based on author
 public_users.get('/author/:author', function (req, res) {
     const author = req.params.author;
-    const found = Object.values(books).find(b => b.author === author);
-    if (found) {
-        return res.json(found);
-    }
 
-    return res.status(404).json({ message: "The author doesn't exist!" });
+    getBooksByAuthor(author)
+        .then(book => {
+            if (book) {
+                return res.json(book);
+            }
+
+            return res.status(404).json({ message: "The author doesn't exist!" });
+        });
 });
 
 // Get all books based on title
